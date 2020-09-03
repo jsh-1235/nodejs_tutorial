@@ -59,6 +59,20 @@ io.sockets.on('connection', function (socket) {
     console.log("clear : " + problems)
   });
 
+  socket.on('remove', function (data) {
+    var id = Number(data.id);
+
+    var index = problems.indexOf(id);
+
+    console.log(id + " " + index)
+
+    problems.splice(index, 1);    
+
+    io.sockets.emit('update', problems);
+
+    console.log("remove : " + problems)
+  });
+
   socket.on('refresh', function (data) {    
     io.sockets.emit('update', problems);    
   });

@@ -1,76 +1,68 @@
 extends layout
 
 block content
-  script.
-    var socket = io();   
-
-    function AddItem(){           
-      socket.emit('add', {
-        'option': 0
-      });        
-    }
-
-    function ClearItem(){     
-      socket.emit('clear', {
-        'option': 1
-      });   
-    }
-
-    socket.on('update', function (list) {        
-      Refresh(list);
-    });      
-
-    function Refresh(list){
-      $('#list').empty();
-
-      for (i = 0; i < list.length; i++) {       
-        $("#list").append('<li class="list-group-item">' + list[i] + '</li>');
-      } 
-
-      $('#spinner').hide('slow')
-    }      
-
-    window.addEventListener("load", function(){
-      //alert("#{title}");
-      //var list = #{JSON.stringify(problems)}
-      //var list = JSON.parse('!{JSON.stringify(problems)}');
-
-      //Refresh(list); 
-
-      $('#spinner').show('slow')
-
-      socket.emit('refresh', {
-        'option': 2
-      });    
-    });  
-
-  p #{title}     
-  p #{new Date().getFullYear()} 
+  //----------------------------------------------------------------------------------------------------
+  div(class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true")
+    div(class="modal-dialog")
+      div(class="modal-content")
+        div(class="modal-header")
+          h5(class="modal-title" id="staticBackdropLabel") Delete an item
+          button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+            span(aria-hidden="true") &times;            
+        div(class="modal-body")
+          p Are you sure you want to delete the selected item?
+        div(class="modal-footer")
+          button(type="button" class="btn btn-secondary" data-dismiss="modal") Close
+          button(id="btnUnderstood" name="" type="button" class="btn btn-primary") Understood                        
+  //----------------------------------------------------------------------------------------------------
+  p #{title}
+  p #{new Date().toLocaleString()}
   hr
   ul(class="nav nav-tabs" role="tablist")
     li(class="nav-item" role="presentation")
-      a(class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="false") Home
+      a(class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true") Home
     li(class="nav-item" role="presentation")
-      a(class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true") Profile
+      a(class="nav-link" id="list-tab" data-toggle="tab" href="#list" role="tab" aria-controls="list" aria-selected="false") List
     li(class="nav-item" role="presentation")
-      a(class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false") Contact
+      a(class="nav-link" id="table-tab" data-toggle="tab" href="#table" role="tab" aria-controls="table" aria-selected="false") Table
     li(class="nav-item" role="presentation")
-      a(class="nav-link" id="form-tab" data-toggle="tab" href="#form" role="tab" aria-controls="form" aria-selected="false") Form  
+      a(class="nav-link" id="form-tab" data-toggle="tab" href="#form" role="tab" aria-controls="form" aria-selected="false") Form
 
-  div(class="tab-content")    
-    div(class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab")       
-      ul(class="list-group")
+  div(class="tab-content")
+    div(class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab")
+      button(id="btnAdd" type="button" class="btn btn-outline-primary" onclick='AddItem()')
+        div
+          span(id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true")
+          span ADD
+
+      button(id="btnClear" type="button" class="btn btn-outline-primary" onclick='ClearItem()') CLEAR
+      hr
+      div
+        ul(id="list-content" class="list-group")
+
+    div(class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab")
+      ul(class="list-group pic-list-group-name")
         each image in images
           if image.id == 1
-            li(class="list-group-item d-flex justify-content-between align-items-center active")= image.title
-              span(class="badge badge-primary badge-pill") 14
-          else
-            li(class="list-group-item d-flex justify-content-between align-items-center")= image.title
-              div(class="form-check form-check-inline")
-                input(class="form-check-input" type="checkbox")
-                label(class="form-check-label") OK
+            a(href="#" class="list-group-item list-group-item-action active")
+              div(class="row")
+                div(class="col mb-1")
+                  h5(class="mb-1")= image.title                                        
+                  small(class="mb-1")= image.content              
 
-    div(class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab")
+                img(class="col col-lg-1" src=image.source alt=image.title)                  
+                small(class="col-md-auto")= image.id                                   
+          else
+            a(href="#" class="list-group-item list-group-item-action")
+              div(class="row")
+                div(class="col mb-1")
+                  h5(class="mb-1")= image.title                                        
+                  small(class="mb-1")= image.content              
+
+                img(class="col col-lg-1" src=image.source alt=image.title)                  
+                small(class="col-md-auto")= image.id            
+
+    div(class="tab-pane fade" id="table" role="tabpanel" aria-labelledby="table-tab")
       div
         table(class="table text-center")
           thead(class="thead-dark")
@@ -88,22 +80,73 @@ block content
                 td(class="align-middle")= image.content
                 td(class="align-middle")= image.source
                 td(class="align-middle")
-                  img(src=image.source alt=image.title style="width: 100px;")                  
+                  img(src=image.source alt=image.title style="width: 100px;")
 
-    div(class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab")        
-      button(id="btnAdd" type="button" class="btn btn-outline-primary" onclick='AddItem()')  
-        div                    
-          span(id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true")
-          span Add
-                         
-      button(id="btnClear" type="button" class="btn btn-outline-primary" onclick='ClearItem()') Clear
-      hr
-      div
-        ul(id="list" class="list-group")         
-      //- div
-      //-   ul(class="list-group")
-      //-     each problem in problems
-      //-       li(class="list-group-item")= problem              
+    div(class="tab-pane fade" id="form" role="tabpanel" aria-labelledby="form-tab")
+      include ../public/html/form.html
 
-    div(class="tab-pane fade" id="form" role="tabpanel" aria-labelledby="contact-form")      
-      include ../public/html/form.html         
+block script
+  //----------------------------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------------------------
+  script.
+    var socket = io();
+
+    function AddItem(){
+      socket.emit('add', {
+        'option': 0
+      });
+    }
+
+    function ClearItem(){
+      socket.emit('clear', {
+        'option': 1
+      });
+    }
+
+    function ItemClick(id){      
+      $("#btnUnderstood").attr("name", id.toString())      
+      
+      $('#staticBackdrop').modal('show')
+    }
+
+    socket.on('update', function (list) {
+      Refresh(list);
+    });
+
+    function Refresh(list){
+      $('#list-content').empty();
+
+      for (i = 0; i < list.length; i++) {
+        //$("#list-content").append('<li class="list-group-item">' + list[i] + '</li>');
+        //$("#list-content").append('<li class="list-group-item d-flex justify-content-between align-items-center">' + list[i] + '<button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#staticBackdrop" onclick="ItemClick(' + list[i] + ')">' + "DELETE" + '</button>' + '</li>');
+        $("#list-content").append('<li class="list-group-item d-flex justify-content-between align-items-center">' + list[i] + '<button type="button" class="btn btn-outline-primary" onclick="ItemClick(' + list[i] + ')">' + "DELETE" + '</button>' + '</li>');
+      }
+
+      $('#spinner').hide('slow')
+    }
+
+    window.addEventListener("load", function(){
+      //alert("#{title}");
+      //var list = #{JSON.stringify(problems)}
+      //var list = JSON.parse('!{JSON.stringify(problems)}');
+      //Refresh(list);
+
+      $('#spinner').show('slow')
+
+      socket.emit('refresh', {
+        'option': 2
+      });
+    });      
+
+    $(document).ready(function() {
+      $("#btnUnderstood").click(function(){     
+        $('#staticBackdrop').modal('hide');        
+
+        //alert($("#btnUnderstood").attr("name"));
+
+        socket.emit('remove', {
+          'id': $("#btnUnderstood").attr("name") 
+        });
+      });  
+    });        
