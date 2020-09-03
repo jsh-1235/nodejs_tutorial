@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    p #{title}     
+    hr
+    div(class="row row-cols-1 row-cols-md-1")
+        each image in images
+            div(class="col mb-4")
+                div(class="card")
+                    img(src=image.source class="card-img-top" alt=image.title)
+                    div(class="card-body")
+                        h5(class="card-title")= image.title
+                        p(class="card-text")= image.content                
+                    div(class="card-footer")
+                        small(class="text-muted")= image.date                                                
+

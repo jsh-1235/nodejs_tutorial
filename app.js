@@ -7,12 +7,13 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var login = require('./routes/login');
+var card = require('./routes/card');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -23,6 +24,7 @@ app.use(express.static(path.join(__dirname, '/node_modules')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/card', card)
 app.use('/login', login)
 
 // catch 404 and forward to error handler

@@ -31,14 +31,36 @@ server.on('listening', onListening);
 
 var io = require('socket.io').listen(server);
 
+let problems = [];
+
+global.problems = problems;
+
+var count = 0;
+
 io.sockets.on('connection', function (socket) {
-  socket.on('request', function (data) {
+  socket.on('add', function (data) {
 
-    var value = Number(data['length'])
+    var value = Number(data['option'])
 
-    console.log("socket : " + value)
+    problems.push(count++);          
 
-    io.sockets.emit('update', value * 10);
+    io.sockets.emit('update', problems);
+
+    console.log("add : " + problems)
+    console.log("option : " + value)
+  });
+
+  socket.on('clear', function (data) {
+    count = 0;
+    problems = [];
+
+    io.sockets.emit('update', problems);
+
+    console.log("clear : " + problems)
+  });
+
+  socket.on('refresh', function (data) {    
+    io.sockets.emit('update', problems);    
   });
 
   console.log('socket.io is connected.');

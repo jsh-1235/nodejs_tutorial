@@ -1,0 +1,59 @@
+doctype html
+html(lang="en" class="h-100")
+  head
+    title= title
+    meta(charset='utf-8')    
+    meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
+    meta(name='description' content='Baking Bootstrap Snippets with Jade')    
+    meta(name="author" content="JSH")
+    meta(name="generator" content="Node.js")
+    link(rel='stylesheet' href='bootstrap-4.5.2-dist/css/bootstrap.min.css')
+    link(rel='stylesheet' href='bootstrap-4.5.2-dist/css/bootstrap-responsive.min.css')    
+    link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css')
+    link(rel='stylesheet' href='/stylesheets/style.css')   
+    script(src='bootstrap-4.5.2-dist/js/bootstrap.min.js')
+    script(src="/socket.io/socket.io.js")
+
+  body(class="d-flex flex-column h-100")
+    nav(class="navbar navbar-expand-md navbar-light fixed-top bg-light")
+      a(class="navbar-brand" href="#") Navbar
+      button(class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+        span(class="navbar-toggler-icon")      
+
+      div(class="collapse navbar-collapse" id="navbarSupportedContent")
+        ul(class="navbar-nav mr-auto")
+          li(class="nav-item active")
+            a(class="nav-link" href="/") Home 
+              span(class="sr-only") (current)          
+          li(class="nav-item")
+            a(class="nav-link" href="card") Card          
+          li(class="nav-item")
+            a(class="nav-link" href="login") Login
+          li(class="nav-item dropdown")
+            a(class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false") Dropdown            
+            div(class="dropdown-menu" aria-labelledby="navbarDropdown")
+              a(class="dropdown-item" href="#") Action
+              a(class="dropdown-item" href="#") Another action
+              div(class="dropdown-divider")
+              a(class="dropdown-item" href="#") Something else here                      
+          li(class="nav-item")
+            a(class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true") Disabled                  
+        form(class="form-inline my-2 my-lg-0")
+          input(class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search")
+          button(class="btn btn-outline-success my-2 my-sm-0" type="submit") Search                  
+
+    main(role="main" class="flex-shrink-0")
+      div(class="container")
+        block content  
+
+    //- include ../public/html/form.html
+
+    footer(class="footer mt-auto py-3")
+      div(class="container d-flex justify-content-center")
+        span(class="text-muted font-weight-bold") 수학 연산 프로그램
+
+    script(src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous")    
+    script(src="bootstrap-4.5.2-dist/js/bootstrap.bundle.min.js")
+
