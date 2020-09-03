@@ -26,6 +26,8 @@ block content
       for (i = 0; i < list.length; i++) {       
         $("#list").append('<li class="list-group-item">' + list[i] + '</li>');
       } 
+
+      $('#spinner').hide('slow')
     }      
 
     window.addEventListener("load", function(){
@@ -34,6 +36,8 @@ block content
       //var list = JSON.parse('!{JSON.stringify(problems)}');
 
       //Refresh(list); 
+
+      $('#spinner').show('slow')
 
       socket.emit('refresh', {
         'option': 2
@@ -86,8 +90,12 @@ block content
                 td(class="align-middle")
                   img(src=image.source alt=image.title style="width: 100px;")                  
 
-    div(class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab")      
-      button(id="btnAdd" type="button" class="btn btn-outline-primary" onclick='AddItem()') Add
+    div(class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab")        
+      button(id="btnAdd" type="button" class="btn btn-outline-primary" onclick='AddItem()')  
+        div                    
+          span(id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true")
+          span Add
+                         
       button(id="btnClear" type="button" class="btn btn-outline-primary" onclick='ClearItem()') Clear
       hr
       div
