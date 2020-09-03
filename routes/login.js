@@ -8,7 +8,8 @@ router.get('/', function (req, res, next) {
 
   var root = path.resolve();
 
-  var filename = root + "\\public\\html\\login.html"
+  //var filename = root + "\\public\\html\\login.html"
+  var filename = root + "/public/html/login.html"
 
   console.log("Path : " + filename);
 
