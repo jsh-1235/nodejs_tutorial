@@ -29,20 +29,34 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+//==============================================================================
+// Socket.io
+//==============================================================================
 var io = require('socket.io').listen(server);
 
+var database = require('../public/javascripts/database');
+
+var security = require('../public/javascripts/security.js')
+
+var dataLogger = require('../public/javascripts/dataLogger');
+
+//==============================================================================
 let problems = [];
 
 global.problems = problems;
 
 var count = 0;
 
-io.sockets.on('connection', function (socket) {
+let certifications = [];
+
+global.certifications = certifications;
+
+function manageList(socket) {
   socket.on('add', function (data) {
 
     var value = Number(data['option'])
 
-    problems.push(count++);          
+    problems.push(count++);
 
     io.sockets.emit('update', problems);
 
@@ -66,16 +80,156 @@ io.sockets.on('connection', function (socket) {
 
     console.log(id + " " + index)
 
-    problems.splice(index, 1);    
+    problems.splice(index, 1);
 
     io.sockets.emit('update', problems);
 
     console.log("remove : " + problems)
   });
 
-  socket.on('refresh', function (data) {    
-    io.sockets.emit('update', problems);    
+  socket.on('refresh', function (data) {
+    io.sockets.emit('update', problems);
   });
+}
+
+//==============================================================================
+function manageDatabase(socket) {
+  socket.on('select', function (data) {
+   //console.log("select : " + data.length)
+
+    database.select().then(function (records) {
+      certifications = [];
+
+      certifications = records;
+
+      console.log("certifications : " + certifications.length)
+
+      for(var i = 0; i < certifications.length; i++){      
+        console.log(certifications[i].id + " " + certifications[i].serialNumber)
+      }
+
+      io.sockets.emit('updateDB', records);
+    }).catch((error) => setImmediate(() => {
+      console.log(error);
+    }));
+  });
+
+  socket.on('insert', function (data) {
+    database.insert(data.length).then(function (row) {
+      database.select().then(function (records) {
+        console.log("row : " + row);
+
+        io.sockets.emit('update', records);
+      }).catch((error) => setImmediate(() => {
+        console.log(error);;
+      }));
+    }).catch((error) => setImmediate(() => {
+      console.log(error);
+    }));
+  });
+
+  socket.on('clear', function (data) {
+    database.clear().then(function (result) {
+      database.select().then(function (records) {
+        console.log("clear : " + result);
+
+        io.sockets.emit('update', records);
+      }).catch((error) => setImmediate(() => {
+        console.log(error);
+      }));
+    }).catch((error) => setImmediate(() => {
+      console.log(error);
+    }));
+  });
+
+  socket.on('delete', function (data) {
+    database.delete(data).then(function (result) {
+      database.select().then(function (records) {
+        console.log("delete : " + data);
+
+        io.sockets.emit('update', records);
+      }).catch((error) => setImmediate(() => {
+        console.log(error);
+      }));
+    }).catch((error) => setImmediate(() => {
+      console.log(error);
+    }));
+  });
+
+  socket.on('register', function (data) {
+    var id = -1;
+
+    var serialNumber = security.decrypt(data.licenseKey);
+
+    for (var i = 0; i < database.Table.length; i++) {
+      if (database.Table[i].serialNumber == serialNumber) {
+
+        id = i;
+
+        console.log(id);
+
+        break;
+      }
+    }
+
+    if (id != -1) {
+
+      var today = new Date();
+
+      database.Table()[id].date = today.toLocaleString();
+
+      if (data.state) {
+        if (database.Table()[id].mac == "") {
+          database.Table()[id].state = 'Register';
+
+          database.Table()[id].mac = data.mac;
+        } else {
+          io.sockets.emit('error', {
+            'title': data.serialNumber,
+            'content': "Already registered."
+          });
+        }
+      } else {
+        if (database.Table()[id].mac != "") {
+          if (data.mac == security.decrypt(database.Table()[id].mac)) {
+            database.Table()[id].state = 'Unregister';
+
+            database.Table()[id].mac = "";
+          } else {
+            console.log('MAC address values do not match.');
+          }
+        } else {
+          io.sockets.emit('error', {
+            'title': data.serialNumber,
+            'content': "Already unregistered."
+          });
+        }
+      }
+
+      io.sockets.emit('update', database.Table());
+
+      io.sockets.emit('register', {
+        'id': id,
+        'state': data.state,
+        'mac': data.mac
+      });
+    }
+  });
+
+  //socket.on('statistics', function (data) {
+  //    var register = database.register();
+
+  //    io.sockets.emit('statistics', {
+  //        'total': database.Table().length,
+  //        'register': register
+  //    });    
+  //});      
+}
+
+io.sockets.on('connection', function (socket) {
+  manageList(socket);
+
+  manageDatabase(socket);
 
   console.log('socket.io is connected.');
 });

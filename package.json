@@ -6,14 +6,25 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "async": "^3.2.0",
     "bootstrap": "^4.5.2",
+    "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.4",
+    "date-utils": "^1.2.21",
     "debug": "~2.6.9",
     "express": "4.16.4",
+    "express-session": "^1.17.1",
     "http-errors": "~1.6.3",
     "jade": "^1.11.0",
     "morgan": "~1.9.1",
+    "mysql": "^2.18.1",
+    "node-rsa": "^1.1.1",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
     "pug": "^3.0.0",
-    "socket.io": "2.3.0"
+    "serve-favicon": "^2.5.0",
+    "socket.io": "2.3.0",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.0"
   }
 }
