@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en" class="h-100">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="JSH">
+    <meta name="generator" content="Node.js">
+    <title>Sticky Footer Navbar Template · Bootstrap</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/sticky-footer-navbar/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap-4.5.2-dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional theme -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"> -->
+
+    <style>
+        main {
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+            color: #5a5a5a;
+        }
+
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+
+        .btn-design {
+            background-color: DodgerBlue; /* Blue background */
+            border: none; /* Remove borders */
+            color: white; /* White text */            
+            font-size: 16px; /* Set a font size */
+            cursor: pointer; /* Mouse pointer on hover */
+          }
+          
+          /* Darker background on mouse-over */
+          .btn-design:hover {
+            background-color: RoyalBlue;
+          }
+    </style>
+
+    <!-- Custom styles for this template -->
+    <link href="../stylesheets/style.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
+
+    <script src="bootstrap-4.5.2-dist/js/bootstrap.min.js"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        var socket = io();
+
+        socket.on('update_problem', function (data) {
+            Refresh(data);
+        });
+
+        function Request() {
+            socket.emit('request_problem', {
+                'length': 10
+            });
+        };
+
+        function Refresh(list) {
+            $('#list-content').empty();
+
+            for (i = 0; i < list.length; i++) {                                
+                var content = '<div>'; 
+                content += '<button type="button" class="btn btn-outline-danger m-1 border-0" onclick="insertItem(' + list[i] + ')">' + "<i class='fas fa-trash fa-1x'></i>" + '</button>'; 
+                content += '<button type="button" class="btn btn-success m-1" onclick="deleteItem(' + list[i] + ')">' + "<i class='far fa-plus-square fa-1x'></i>" + '</button>';                 
+                content += '<button type="button" class="btn btn-design" onclick="updateItem(' + list[i] + ')">' + "<i class='fas fa-pencil-alt'></i>" + '</button>';                 
+                content += '</div>'; 
+
+                $("#list-content").append('<li class="list-group-item d-flex justify-content-between align-items-center">' + '<div style="font-size:20pt;">' + list[i] + '</div>' + content + '</li>');
+            }
+
+            $('#spinner').hide('slow')
+        }
+    </script>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header>
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
+            <a class="navbar-brand" href="#">Menu</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Begin page content -->
+    <main role="main" class="flex-shrink-0">
+        <div class="container">
+            <button type="button" class="btn btn-outline-primary" onclick="Request()">Request</button>
+            <hr />
+            <div>
+                <ul id="list-content" class="list-group"></ul>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer mt-auto py-3">
+        <div class="container d-flex justify-content-center">
+            <span class="text-muted font-weight-bold">수학 연산 프로그램</span>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="../bootstrap-4.5.2-dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

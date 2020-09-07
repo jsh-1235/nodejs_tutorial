@@ -5,16 +5,16 @@ require('winston-daily-rotate-file');
 require('date-utils');
 
 const logger = winston.createLogger({
-    level: 'debug', // ÃÖ¼Ò ·¹º§
-    // ÆÄÀÏÀúÀå
+    level: 'debug', // ìµœì†Œ ë ˆë²¨
+    // íŒŒì¼ì €ìž¥
     transports: [
         new winston.transports.DailyRotateFile({
-            filename: 'log/system.log',     // log Æú´õ¿¡ system.log ÀÌ¸§À¸·Î ÀúÀå
-            zippedArchive: true,            // ¾ÐÃà¿©ºÎ
+            filename: 'log/system.log',     // log í´ë”ì— system.log ì´ë¦„ìœ¼ë¡œ ì €ìž¥
+            zippedArchive: true,            // ì••ì¶•ì—¬ë¶€
             format: winston.format.printf(
                 info => `${new Date().toFormat('YYYY-MM-DD HH24:MI:SS')} [${info.level.toUpperCase()}] - ${info.message}`)
         }),
-        // ÄÜ¼Ö Ãâ·Â
+        // ì½˜ì†” ì¶œë ¥
         new winston.transports.Console({
             format: winston.format.printf(
                 info => `${new Date().toFormat('YYYY-MM-DD HH24:MI:SS')} [${info.level.toUpperCase()}] - ${info.message}`)

@@ -1,0 +1,185 @@
+extends layout
+
+block content    
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    include ../public/html/dialog.html          
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    p #{title}     
+    hr
+
+    div(class="row")
+        div(class="col align-self-center")
+            span(id="total" class="align-middle") Total 0 / 10
+
+        div(class="col align-self-center input-group")
+            div(class="input-group-prepend")
+                span(class="input-group-text" id="basic-addon") @
+            input(id="keyword" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon")                
+
+        div(class="col-md-auto btn-group" role="group" aria-label="Basic example")
+            button(id="btnSelect" type="button" class="btn btn-primary") SELECT
+            button(id="btnReset" type="button" class="btn btn-secondary") RESET
+            button(id="btnInsert" type="button" class="btn btn-secondary") INSERT
+            button(id="btnClear" type="button" class="btn btn-secondary") CLEAR 
+    hr
+    div
+        table(class="table text-center")
+            thead(class="thead-dark")
+            tr
+                th(scope="col") ID
+                th(scope="col") Date
+                th(scope="col") Serial Number
+                th(scope="col") License Key
+                th(scope="col") State
+                th(scope="col") MAC
+                th(scope="col") Settings                
+            tbody(id="dynamicTbody")
+
+
+block script  
+    script.       
+        var socket = io();   
+
+        window.addEventListener("load", function(){           
+            socket.emit('select', {
+                'length': 0
+            });
+        }); 
+
+        $(document).ready(function() {                                     
+            function statistics(record) {
+                var count = 0;
+
+                for (var i = 0; i < record.length; i++) {
+                    if (record[i].state == "Register") {
+                        count++;
+                    }
+                }
+
+                return count;
+            }
+
+            socket.on('update', function (data) {
+                createTable(data);
+
+                for (var i = 0; i < data.length; i++) {
+                    var tr = $('#dynamicTbody').children().eq(i);
+
+                    var td = tr.children().eq(4);
+
+                    if (data[i].state == 'Register') {
+                        td.css("background-color", "aqua")
+                    } else {
+                        td.css("background-color", "white")
+                    }
+                }
+
+                $("#total").text("Total : " + statistics(data) + " / " + data.length);                                   
+            });
+
+            $("#btnSelect").click(function(){                                   
+                socket.emit('select', {
+                    'length': 0
+                });
+            }); 
+
+            $("#btnReset").click(function(){                                   
+                $("#dynamicTbody").empty();
+            });  
+
+            $('input[type=range]').on('input', function () {
+                $(this).trigger('change');
+            });
+
+            $("#inputRange").change(function () {              
+                $("#inputLabel").html($("#inputRange").val());
+            });
+
+            $("#btnInsert").click(function(){                                                  
+                $('#dialogInsert').modal('show')              
+            });  
+
+            $("#btn-insert-ok").click(function(){                                                                                       
+                socket.emit('insert', {
+                    'length': $("#inputRange").val()
+                });
+
+                $('#dialogInsert').modal('hide')                  
+            });
+
+            $("#btnClear").click(function(){                                   
+                socket.emit('clear', "clear");                
+            });  
+
+            $("#keyword").on("keyup", function () {                
+                var value = $(this).val();
+
+                console.log(value);
+
+                $("#dynamicTbody > tr").hide();
+
+                var temp = $("#dynamicTbody > tr > td:nth-child(3):contains('" + value + "')");
+
+                $(temp).parent().show();
+            });
+
+            $("#btn-delete-yes").click(function(){                                                                                       
+                socket.emit('delete', selectedRow.children().eq(0).text());       
+
+                selectedRow.remove();   
+
+                $('#dialogDelete').modal('hide')                  
+            });
+
+            var selectedRow = null;
+
+            function createTable(records) {
+                if (records) {
+                    var html = '';
+
+                    for (key in records) {
+                        html += '<tr>';
+                        html += '<td class="align-middle">' + records[key].id + '</td>';
+                        html += '<td class="align-middle">' + records[key].date + '</td>';
+                        html += '<td class="align-middle">' + records[key].serialNumber + '</td>';
+                        html += '<td class="align-middle">' + records[key].licenseKey + '</td>';
+                        html += '<td class="align-middle">' + records[key].state + '</td>';
+                        html += '<td class="align-middle">' + records[key].mac + '</td>';
+                        html += '<td><button name="delRow" type="button" class="btn btn-primary delRow">DELETE</button></td>';
+                        html += '</tr>';
+                    } 
+
+                    $("#dynamicTbody").empty();        
+
+                    $("#dynamicTbody").append(html);   
+                } else {
+                    alert("Data is null.")
+
+                    $("#dynamicTbody").empty();
+                }
+
+                $("#keyword").val('');
+
+                $('.delRow').click(function () {                
+                    var tr = $(this).parent().parent();
+
+                    selectedRow = tr;
+
+                    //- socket.emit('delete', tr.children().eq(0).text());       
+
+                    //- $(this).parent().parent().remove();   
+                    //- tr.remove();
+
+                    //- alert($(this).parent().parent());
+
+                    $('#dialogDeleteLabel').html("Do you want to delete the data?");
+
+                    $('#dialogIndex').html("Index : " + tr.index());
+                    $('#dialogID').html("ID : " + tr.children().eq(0).text());
+                    $('#dialogSerialNumber').html("Serial Number : " + tr.children().eq(2).text());
+
+                    $('#dialogDelete').modal('show')
+                });             
+            }         
+        });

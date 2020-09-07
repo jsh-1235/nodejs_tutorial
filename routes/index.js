@@ -44,7 +44,7 @@ router.get('/', function (req, res, next) {
   // console.log(images.length);
   // console.log(images[0].title);  
 
-  res.render('index', { title: 'Express', images: images, problems: problems });
+  res.render('index', { title: 'Express', images: images, list: list });
 });
 
 module.exports = router;

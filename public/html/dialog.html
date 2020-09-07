@@ -1,0 +1,45 @@
+<div class="modal fade" id="dialogDelete" tabindex="-1" aria-labelledby="dialogDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dialogDeleteLabel">Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="dialogIndex">Index</p>
+                <p id="dialogID">ID</p>
+                <p id="dialogSerialNumber">Serial Number</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button id="btn-delete-yes" type="button" class="btn btn-primary">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dialogInsert" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="dialogInsertLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dialogInsertLabel">Insertion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label id="inputLabel" for="formControlRange">1</label>
+                <input id="inputRange" type="range" class="form-control-range" id="formControlRange" min="1" max="10"
+                    value="1">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    style="min-width: 100px;">Close</button>
+                <button id="btn-insert-ok" type="button" class="btn btn-primary" style="min-width: 100px;">OK</button>
+            </div>
+        </div>
+    </div>
+</div>

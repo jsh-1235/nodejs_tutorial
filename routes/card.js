@@ -39,7 +39,7 @@ images = [
   }
 ]
 
-/* GET home page. */
+/* GET manager page. */
 router.get('/', function (req, res, next) {
   res.render('card', { title: 'Card', images: images });
 });

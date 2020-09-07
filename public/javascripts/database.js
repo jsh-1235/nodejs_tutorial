@@ -2,12 +2,23 @@
 var mysql = require('mysql');
 var security = require('./security');
 
+// function connect() {
+//     return mysql.createConnection({
+//         host: 'localhost',
+//         user: 'root',
+//         password: 'jshhaby0921++',
+//         database: 'License',
+//         port: 3306,
+//         ssl: false
+//     });
+// }
+
 function connect() {
     return mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'jshhaby0921++',
-        database: 'License',
+        host: 'us-cdbr-east-02.cleardb.com',
+        user: 'b7f38136889ea3',
+        password: '9bc0ca2f',
+        database: 'heroku_c7d8ff5943024e2',
         port: 3306,
         ssl: false
     });

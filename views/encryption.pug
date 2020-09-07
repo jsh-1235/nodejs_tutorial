@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  h1= title
+  h2 Public Key
+  p #{publicKey}
+  hr
+  h2 Original Plain Text
+  p #{serialNumber}
+  hr
+  h2 Cipher Output [AES Encoding : Serial Key]
+  p #{cipherOutput}
+  hr
+  h2 Encryption [RSA Encoding : Client]
+  p #{encrypt}
+  hr
+  h2 Decryption [RSA Decoding : Server, Private Key] [1차]
+  p #{decrypt}
+  hr
+  h2 Decipher Output [AES Decoding, Symmetric Key] [2차]
+  p #{decipherOutput}
+  hr
+  h2 Result [Character Comparison]
+  p #{compare}

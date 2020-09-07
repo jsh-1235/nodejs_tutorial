@@ -41,9 +41,9 @@ var security = require('../public/javascripts/security.js')
 var dataLogger = require('../public/javascripts/dataLogger');
 
 //==============================================================================
-let problems = [];
+let list = [];
 
-global.problems = problems;
+global.list = list;
 
 var count = 0;
 
@@ -51,51 +51,100 @@ let certifications = [];
 
 global.certifications = certifications;
 
+//==============================================================================
 function manageList(socket) {
-  socket.on('add', function (data) {
+  socket.on('list_add', function (data) {
 
     var value = Number(data['option'])
 
-    problems.push(count++);
+    list.push(count++);
 
-    io.sockets.emit('update', problems);
+    io.sockets.emit('list_update', list);
 
-    console.log("add : " + problems)
+    console.log("add : " + list)
     console.log("option : " + value)
+
+    dataLogger.info('List : Add');
   });
 
-  socket.on('clear', function (data) {
+  socket.on('list_clear', function (data) {
     count = 0;
-    problems = [];
 
-    io.sockets.emit('update', problems);
+    list = [];
 
-    console.log("clear : " + problems)
+    io.sockets.emit('list_update', list);
+
+    console.log("clear : " + list)
+
+    dataLogger.info('List : Clear');
   });
 
-  socket.on('remove', function (data) {
+  socket.on('list_remove', function (data) {
     var id = Number(data.id);
 
-    var index = problems.indexOf(id);
+    var index = list.indexOf(id);
 
     console.log(id + " " + index)
 
-    problems.splice(index, 1);
+    list.splice(index, 1);
 
-    io.sockets.emit('update', problems);
+    io.sockets.emit('list_update', list);
 
-    console.log("remove : " + problems)
+    console.log("remove : " + list)
+
+    dataLogger.info('List : Remove');
   });
 
-  socket.on('refresh', function (data) {
-    io.sockets.emit('update', problems);
+  socket.on('list_refresh', function (data) {
+    io.sockets.emit('list_update', list);
+
+    dataLogger.info('List : Refresh');
   });
+}
+
+//==============================================================================
+function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+
+  max = Math.floor(max);
+
+  return Math.floor(Math.random() * (max - min + 1)) + min; //최댓값도 포함, 최솟값도 포함
+}
+
+function createProblem(){
+  var result = "";
+
+  var num1 = getRandomIntInclusive(0, 100);
+
+  var num2 = getRandomIntInclusive(0, 100);
+
+  result = num1 + " + " + num2 + " = " + (num1 + num2);
+
+  return result;
+}
+
+function manageProblem(socket) {
+  let problems = [];
+
+  socket.on('request_problem', function (data) {
+    var value = Number(data['length'])
+
+    console.log("value : " + value)
+
+    problems = [];
+
+    for(var i = 0; i < value; i++){
+      problems.push(createProblem());
+    }
+    
+    io.sockets.emit('update_problem', problems);
+  });  
 }
 
 //==============================================================================
 function manageDatabase(socket) {
   socket.on('select', function (data) {
-   //console.log("select : " + data.length)
+    //console.log("select : " + data.length)
 
     database.select().then(function (records) {
       certifications = [];
@@ -104,11 +153,11 @@ function manageDatabase(socket) {
 
       console.log("certifications : " + certifications.length)
 
-      for(var i = 0; i < certifications.length; i++){      
+      for (var i = 0; i < certifications.length; i++) {
         console.log(certifications[i].id + " " + certifications[i].serialNumber)
       }
 
-      io.sockets.emit('updateDB', records);
+      io.sockets.emit('update', records);
     }).catch((error) => setImmediate(() => {
       console.log(error);
     }));
@@ -229,7 +278,9 @@ function manageDatabase(socket) {
 io.sockets.on('connection', function (socket) {
   manageList(socket);
 
-  manageDatabase(socket);
+  manageProblem(socket);
+
+  manageDatabase(socket);  
 
   console.log('socket.io is connected.');
 });

@@ -92,13 +92,13 @@ block script
     var socket = io();
 
     function AddItem(){
-      socket.emit('add', {
+      socket.emit('list_add', {
         'option': 0
       });
     }
 
     function ClearItem(){
-      socket.emit('clear', {
+      socket.emit('list_clear', {
         'option': 1
       });
     }
@@ -109,7 +109,17 @@ block script
       $('#staticBackdrop').modal('show')
     }
 
-    socket.on('update', function (list) {
+    $("#btnUnderstood").click(function(){     
+      $('#staticBackdrop').modal('hide');        
+
+      //alert($("#btnUnderstood").attr("name"));
+
+      socket.emit('list_remove', {
+        'id': $("#btnUnderstood").attr("name") 
+      });
+    });  
+
+    socket.on('list_update', function (list) {
       Refresh(list);
     });
 
@@ -127,25 +137,16 @@ block script
 
     window.addEventListener("load", function(){
       //alert("#{title}");
-      //var list = #{JSON.stringify(problems)}
-      //var list = JSON.parse('!{JSON.stringify(problems)}');
+      //var list = #{JSON.stringify(list)}
+      //var list = JSON.parse('!{JSON.stringify(list)}');
       //Refresh(list);
 
       $('#spinner').show('slow')
 
-      socket.emit('refresh', {
+      socket.emit('list_refresh', {
         'option': 2
       });
     });      
 
-    $(document).ready(function() {
-      $("#btnUnderstood").click(function(){     
-        $('#staticBackdrop').modal('hide');        
-
-        //alert($("#btnUnderstood").attr("name"));
-
-        socket.emit('remove', {
-          'id': $("#btnUnderstood").attr("name") 
-        });
-      });  
+    $(document).ready(function() {     
     });        
